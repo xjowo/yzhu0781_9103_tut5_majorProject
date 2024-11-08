@@ -1,4 +1,4 @@
-let myCircles = [];// Array to store circle
+let myCircles = [];// Array to store circle 
 let numOfCircles = 33;// Number of circles
 let bgImage; // Background image
 let bottomX = 111; // X position of the semicircles at bottom most(1-5)
@@ -41,24 +41,27 @@ function setup() {
 class MyCircleClass {
    constructor(x, y, size) {
      this.x = x; // X position of circle
-
      this.y = y; // Y position of circle
-
      this.size = size; // Size of circle
-
-     // Stroke weight for circle outline
-     this.stroke = 0; 
-     // First color for half of circle (green)
-     this.color1 = color(228, 102, 103); 
-     // Second color for half of circle (red)
-     this.color2 = color(142, 171, 126); 
-    }
+     this.stroke = 0; // Stroke weight for circle outline
+     this.color1 = color(228, 102, 103); // First color for half of circle (green)
+     this.color2 = color(142, 171, 126); // Second color for half of circle (red)
+     this.ySpeed = random(3, 15); // Random fall speed for each circle
+     this.stopped = false; // Stop moving when it reaches bottom
+   }
   
     draw() {
+     // If the circle has not reached the bottom, it continues to fall
+     if (!this.stopped) {
+       this.y += this.ySpeed;
+       if (this.y >= height - this.size / 2) { // Stop when reaching bottom
+         this.stopped = true;
+       }
+     }
+     
      // Draw first half of the circle with color1
      fill(this.color1);
      stroke(this.stroke);
-     // Reference: https://p5js.org/zh-Hans/reference/p5/arc/
      arc(this.x, this.y, this.size, this.size, HALF_PI, -HALF_PI, PIE);
      // Draw second half of the circle with color2
      fill(this.color2);
