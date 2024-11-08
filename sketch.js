@@ -34,12 +34,13 @@ function setup() {
    
    // Initialize circles with positions and sizes
    for(let i = 0; i < numOfCircles; i++){
-       myCircles.push(new MyCircleClass(circlePositions[i][0], circlePositions[i][1], circleDiameters[i]));
+      let delay = i * 20; // Each circle starts falling with a delay
+       myCircles.push(new MyCircleClass(circlePositions[i][0], circlePositions[i][1], circleDiameters[i],delay));
     }
 }
 
 class MyCircleClass {
-   constructor(x, y, size) {
+   constructor(x, y, size, delay) {
      this.x = x; // X position of circle
      this.y = y; // Y position of circle
      this.size = size; // Size of circle
@@ -49,10 +50,13 @@ class MyCircleClass {
      this.gravity = 0.1; // Add gravity
      this.ySpeed = 0; // Initial speed
      this.stopped = false;
+     this.delay = delay;
+     this.startFall = millis() + this.delay;
+     this.easingFactor = 0.98; // Factor to slow down bouncing
    }
    
    draw() {
-    if (!this.stopped) {
+    if (millis() > this.startFall && !this.stopped) {
       // Apply gravity and update position
       this.ySpeed += this.gravity;
       this.y += this.ySpeed;
@@ -61,10 +65,13 @@ class MyCircleClass {
       if (this.y >= height - this.size / 2) {
         this.y = height - this.size / 2; // Fix position at the bottom
         this.ySpeed *= -0.6; // Reverse speed for bounce, damping factor
+
         if (abs(this.ySpeed) < 0.5) { // Stop when bounce is small
+          this.ySpeed = 0;
           this.stopped = true;
         }
       }
+      this.ySpeed *= this.easingFactor; // Apply easing to the bounce
     }
     
     fill(this.color1);
