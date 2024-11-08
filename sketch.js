@@ -47,22 +47,25 @@ class MyCircleClass {
      this.stroke = 0; // Stroke weight for circle outline
      this.color1 = color(228, 102, 103); // First color for half of circle (green)
      this.color2 = color(142, 171, 126); // Second color for half of circle (red)
-     this.ySpeed = random(2, 5); // Random fall speed for each circle
-     this.stopped = false; // Stop moving when it reaches bottom
-     this.bounce = false; // If is in bounce 
+     this.ySpeed = random(3, 7); // Random fall & bounce speed for each circle
+     this.bounceTime = 0; // Count the times of bounce
+     this.maxBounce = 3; // Max Bounce times
    }
   
    draw() {
-    if (!this.stopped && !this.bounce) {
-      this.y += this.ySpeed;
-      if (this.y >= height - this.size / 2) {
-        this.bounce = true;
-      }
-    } else if (this.bounce) { // The process of bounce
-      this.y -= this.ySpeed;
-      if (this.y <= this.initialY) { // Stop bounce if it's at the initial position
-        this.y = this.initialY;
-        this.bounce = false;
+    if (this.bounceTime < this.maxBounce) {
+      if (!this.bounce) {
+        this.y += this.ySpeed;
+        if (this.y >= height - this.size / 2) {
+          this.bounce = true;
+        }
+      } else {
+        this.y -= this.ySpeed;
+        if (this.y <= this.initialY) {
+          this.y = this.initialY; // Bounce back to the initial position of the circle
+          this.bounce = false;
+          this.bounceTime++; // Add times of bounce
+        }
       }
     }
     fill(this.color1);
@@ -71,7 +74,6 @@ class MyCircleClass {
     fill(this.color2);
     arc(this.x, this.y, this.size, this.size, -HALF_PI, HALF_PI, PIE);
    }
-
 }
 
 function draw() {
