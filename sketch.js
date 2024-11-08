@@ -42,34 +42,31 @@ class MyCircleClass {
    constructor(x, y, size) {
      this.x = x; // X position of circle
      this.y = y; // Y position of circle
-     this.initialY = y; // Initial position of the circle
      this.size = size; // Size of circle
      this.stroke = 0; // Stroke weight for circle outline
      this.color1 = color(228, 102, 103); // First color for half of circle (green)
      this.color2 = color(142, 171, 126); // Second color for half of circle (red)
-     this.ySpeed = random(1, 20); // Random fall & bounce speed for each circle
-     this.delayCount = millis() + random(1, 3000); // Random delay
-     this.bounceTime = 0; // Count the times of bounce
-     this.maxBounce = 3; // Max Bounce times
+     this.gravity = 0.1; // Add gravity
+     this.ySpeed = 0; // Initial speed
+     this.stopped = false;
    }
    
    draw() {
-    // Make sure all the circles bounce randomly with different delay
-    if (millis() >= this.delayCount && this.bounceTime < this.maxBounce) {
-      if (!this.bounce) {
-        this.y += this.ySpeed;
-        if (this.y >= height - this.size / 2) {
-          this.bounce = true;
-        }
-      } else {
-        this.y -= this.ySpeed;
-        if (this.y <= this.initialY) {
-          this.y = this.initialY; // Bounce back to the initial position of the circle
-          this.bounce = false;
-          this.bounceTime++; // Add times of bounce
+    if (!this.stopped) {
+      // Apply gravity and update position
+      this.ySpeed += this.gravity;
+      this.y += this.ySpeed;
+      
+      // Check if circle hits the bottom
+      if (this.y >= height - this.size / 2) {
+        this.y = height - this.size / 2; // Fix position at the bottom
+        this.ySpeed *= -0.6; // Reverse speed for bounce, damping factor
+        if (abs(this.ySpeed) < 0.5) { // Stop when bounce is small
+          this.stopped = true;
         }
       }
     }
+    
     fill(this.color1);
     stroke(this.stroke);
     arc(this.x, this.y, this.size, this.size, HALF_PI, -HALF_PI, PIE);
