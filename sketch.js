@@ -42,32 +42,36 @@ class MyCircleClass {
    constructor(x, y, size) {
      this.x = x; // X position of circle
      this.y = y; // Y position of circle
+     this.initialY = y; // Initial position of the circle
      this.size = size; // Size of circle
      this.stroke = 0; // Stroke weight for circle outline
      this.color1 = color(228, 102, 103); // First color for half of circle (green)
      this.color2 = color(142, 171, 126); // Second color for half of circle (red)
-     this.ySpeed = random(5, 10); // Random fall speed for each circle
+     this.ySpeed = random(2, 5); // Random fall speed for each circle
      this.stopped = false; // Stop moving when it reaches bottom
-     this.outScreen = false; // Add this to check if the circle is out of screen
+     this.bounce = false; // If is in bounce 
    }
   
    draw() {
-    if (!this.stopped && !this.outScreen) {
+    if (!this.stopped && !this.bounce) {
       this.y += this.ySpeed;
-      // If a circle is out of the screen
-      if (this.y >= height + this.size / 2) { 
-        this.outScreen = true;
+      if (this.y >= height - this.size / 2) {
+        this.bounce = true;
+      }
+    } else if (this.bounce) { // The process of bounce
+      this.y -= this.ySpeed;
+      if (this.y <= this.initialY) { // Stop bounce if it's at the initial position
+        this.y = this.initialY;
+        this.bounce = false;
       }
     }
-    // Only draw the circle if it is within the screen
-    if (!this.outScreen) { 
-      fill(this.color1);
-      stroke(this.stroke);
-      arc(this.x, this.y, this.size, this.size, HALF_PI, -HALF_PI, PIE);
-      fill(this.color2);
-      arc(this.x, this.y, this.size, this.size, -HALF_PI, HALF_PI, PIE);
-    }
+    fill(this.color1);
+    stroke(this.stroke);
+    arc(this.x, this.y, this.size, this.size, HALF_PI, -HALF_PI, PIE);
+    fill(this.color2);
+    arc(this.x, this.y, this.size, this.size, -HALF_PI, HALF_PI, PIE);
    }
+
 }
 
 function draw() {
