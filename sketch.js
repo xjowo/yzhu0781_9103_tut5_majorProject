@@ -37,7 +37,7 @@ function setup() {
        myCircles.push(new MyCircleClass(circlePositions[i][0], circlePositions[i][1], circleDiameters[i]));
     }
 }
-  
+
 class MyCircleClass {
    constructor(x, y, size) {
      this.x = x; // X position of circle
@@ -46,29 +46,30 @@ class MyCircleClass {
      this.stroke = 0; // Stroke weight for circle outline
      this.color1 = color(228, 102, 103); // First color for half of circle (green)
      this.color2 = color(142, 171, 126); // Second color for half of circle (red)
-     this.ySpeed = random(3, 15); // Random fall speed for each circle
+     this.ySpeed = random(5, 10); // Random fall speed for each circle
      this.stopped = false; // Stop moving when it reaches bottom
+     this.outScreen = false; // Add this to check if the circle is out of screen
    }
   
-    draw() {
-     // If the circle has not reached the bottom, it continues to fall
-     if (!this.stopped) {
-       this.y += this.ySpeed;
-       if (this.y >= height - this.size / 2) { // Stop when reaching bottom
-         this.stopped = true;
-       }
-     }
-     
-     // Draw first half of the circle with color1
-     fill(this.color1);
-     stroke(this.stroke);
-     arc(this.x, this.y, this.size, this.size, HALF_PI, -HALF_PI, PIE);
-     // Draw second half of the circle with color2
-     fill(this.color2);
-     arc(this.x, this.y, this.size, this.size, -HALF_PI, HALF_PI, PIE);
+   draw() {
+    if (!this.stopped && !this.outScreen) {
+      this.y += this.ySpeed;
+      // If a circle is out of the screen
+      if (this.y >= height + this.size / 2) { 
+        this.outScreen = true;
+      }
     }
+    // Only draw the circle if it is within the screen
+    if (!this.outScreen) { 
+      fill(this.color1);
+      stroke(this.stroke);
+      arc(this.x, this.y, this.size, this.size, HALF_PI, -HALF_PI, PIE);
+      fill(this.color2);
+      arc(this.x, this.y, this.size, this.size, -HALF_PI, HALF_PI, PIE);
+    }
+   }
 }
-  
+
 function draw() {
   // Set background image
   background(bgImage);
