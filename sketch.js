@@ -47,13 +47,15 @@ class MyCircleClass {
      this.stroke = 0; // Stroke weight for circle outline
      this.color1 = color(228, 102, 103); // First color for half of circle (green)
      this.color2 = color(142, 171, 126); // Second color for half of circle (red)
-     this.ySpeed = random(3, 7); // Random fall & bounce speed for each circle
+     this.ySpeed = random(1, 20); // Random fall & bounce speed for each circle
+     this.delayCount = millis() + random(1, 3000); // Random delay
      this.bounceTime = 0; // Count the times of bounce
      this.maxBounce = 3; // Max Bounce times
    }
-  
+   
    draw() {
-    if (this.bounceTime < this.maxBounce) {
+    // Make sure all the circles bounce randomly with different delay
+    if (millis() >= this.delayCount && this.bounceTime < this.maxBounce) {
       if (!this.bounce) {
         this.y += this.ySpeed;
         if (this.y >= height - this.size / 2) {
