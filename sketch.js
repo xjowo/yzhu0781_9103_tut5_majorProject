@@ -43,35 +43,48 @@ class MyCircleClass {
    constructor(x, y, size, delay) {
      this.x = x; // X position of circle
      this.y = y; // Y position of circle
+     this.originalX = x; // The original X position to return to
+     this.originalY = y; // The original Y position to return to
      this.size = size; // Size of circle
      this.stroke = 0; // Stroke weight for circle outline
      this.color1 = color(228, 102, 103); // First color for half of circle (green)
      this.color2 = color(142, 171, 126); // Second color for half of circle (red)
      this.gravity = 0.1; // Add gravity
-     this.ySpeed = 0; // Initial speed
-     this.stopped = false;
-     this.delay = delay;
-     this.startFall = millis() + this.delay;
-     this.easingFactor = 0.98; // Factor to slow down bouncing
+     this.ySpeed = 0; // Initial vertical speed of the circle
+     this.stopped = false; // Whether the circle has stopped bouncing
+     this.delay = delay; // Delay before the circle starts falling
+     this.startFall = millis() + this.delay; // Time when the circle starts falling
+     this.easingFactor = 0.98; // Factor to reduce speed during bounce
+     this.returning = false; // Whether the circle is returning to its original position
    }
    
    draw() {
-    if (millis() > this.startFall && !this.stopped) {
-      // Apply gravity and update position
-      this.ySpeed += this.gravity;
-      this.y += this.ySpeed;
+    if (millis() > this.startFall && !this.stopped && !this.returning) {
+       // If the circle is in freefall (hasn't stopped or started returning)
+      this.ySpeed += this.gravity; // Apply gravity and update position
+      this.y += this.ySpeed; // Update the Y position based on speed
       
-      // Check if circle hits the bottom
+      // Check if circle hits the bottom of the canvas
       if (this.y >= height - this.size / 2) {
         this.y = height - this.size / 2; // Fix position at the bottom
-        this.ySpeed *= -0.6; // Reverse speed for bounce, damping factor
+        this.ySpeed *= -0.6; // Reverse speed for bounce
 
-        if (abs(this.ySpeed) < 0.5) { // Stop when bounce is small
+        if (abs(this.ySpeed) < 0.5) { // Stop bouncing if speed is minimal
           this.ySpeed = 0;
-          this.stopped = true;
+          this.stopped = true; // Stop movement
+          this.returning = true; // Start returning to original position
         }
       }
       this.ySpeed *= this.easingFactor; // Apply easing to the bounce
+    }
+
+    if (this.returning) {
+      this.y += (this.originalY - this.y) * 0.05; // Smoothly move back
+       // Stop returning if close to the original position
+      if (abs(this.y - this.originalY) < 1) {
+        this.y = this.originalY;
+        this.returning = false; // Stop moving when close enough
+      }
     }
     
     fill(this.color1);
@@ -82,7 +95,7 @@ class MyCircleClass {
    }
 }
 
-function draw() {
+  function draw() {
   // Set background image
   background(bgImage);
 
